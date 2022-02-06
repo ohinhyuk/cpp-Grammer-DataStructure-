@@ -1,18 +1,21 @@
+// struct 와 class를 이용하여 Singlist 구현
+// 추가로 template을 사용하여 int 뿐만 아니라 다른 type을 연결하는 singlist로 사용할 수 있다.
+
 #include <iostream>
 
 using namespace std;
 
 template<typename T>
 struct Node{
-    T data;
+    T data; // Node 속 data 저장.
     Node<T>* next = nullptr;
 };
 
 template<typename T>
 class Singlist{
 private:
-    Node<T>* head;
-    Node<T>* tail;
+    Node<T>* head; // singlist의 시작. list의 data가 들어있지는 않다.
+    Node<T>* tail; // sinlist의 마지막. list의 data가 들어있지는 않다.
 public:
 
     Singlist() : head(new Node<T>{-1,nullptr}) , tail(new Node<T>{-1,nullptr}) {}
@@ -21,6 +24,8 @@ public:
     bool empty(){
         return (head->next == nullptr || head->next == tail) ? true : false;
     }
+
+    // tail 직전 Node를 return
 
     Node<T>* find_last_node(){
         Node<T>* last = head;
@@ -31,6 +36,8 @@ public:
         return last;
     }
 
+    // tail 직전에 new_Value 값을 data로 갖는 Node를 추가.
+
     void addNode(T new_value){
         if(empty()){
             head->next = new Node<T>{new_value,tail};
@@ -40,6 +47,8 @@ public:
             last_node->next = new Node<T>{new_value,tail};
         }
     }
+
+    // tail 직전의 Node를 삭제.
 
     void deleteNode(){
         if(empty()){
@@ -57,6 +66,8 @@ public:
         }
     }
 
+    // head와 tail을 제외한 노드의 갯수를 return.
+
     int size(){
         Node<T>* size = head;
         int cnt = 0;
@@ -67,6 +78,8 @@ public:
         }
         return cnt;
     }
+
+    // Index N번째에 new_value 값을 data로 가지는 Node를 추가.
 
     void insertNode(T new_value , int N){
         if(N > size()){
@@ -87,6 +100,8 @@ public:
         }
     }
 
+    // singlist 출력.
+
     void printAll(){
         Node<T>* node = head;
         if(empty()) return ;
@@ -96,6 +111,8 @@ public:
         }
     }
 
+    // value의 값을 data로 가지는 Node가 있는지 없는지 확인.
+
     bool search(T value){
         Node<T>* node = head->next;
         while(node != tail){
@@ -104,6 +121,8 @@ public:
         }
         return false;
     }
+
+    // Index N번째에 있는 Node의 data를 return.
 
     T getData(int N){
         if(N >= size()){
