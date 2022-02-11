@@ -289,10 +289,11 @@ void shuffle (pList p){
 
 void bubblesort(pList p,int (*comp)(int a, int b)){
     if(sorted(p,comp)) return ;
-    bool complete = false;
-    pNode temp = end(p);
+    bool complete = true;
+    pNode temp = p->tail;
     pNode n;
-    for(int i = 0 ; i < size(p) ; ++i){
+    int size_p = size(p);
+    for(int i = 0 ; i < size_p ; ++i){
         for(n = begin(p) ; n->next != end(p) ; n = n->next){
             if(comp(n->data , n->next->data) > 0){
                 complete = false;
@@ -303,58 +304,62 @@ void bubblesort(pList p,int (*comp)(int a, int b)){
         if(complete) break;
         complete = true;
     }
+    
 
     p->tail = temp;
 }
 
-bool partial_sorted(int(*comp)(int a, int b) ,pNode start , pNode done){
-    pNode check = start;
-    pNode check_next = check->next;
-        
-    for(; check != done ; check = check->next ){    
-        if(comp(check->data, check_next->data) > 0 ) return false;
-        check_next = check_next->next;
+
+int index(pList p , pNode node){
+    if(empty(p)) return -1;
+
+    int i = 0;
+
+    for(pNode n = begin(p) ; n != end(p) ; n = n->next){
+        if(node == n) break;
+        i++;
     }
-    return true;
+
+    return i;
 }
-void qsort(pList p, int(*comp)(int a, int b), pNode start , pNode done){
-    if(sorted(p,comp)) return ;
-    if(start == done) return ;
-    if(start->next == done){
-        if(comp(start->data , done->data) > 0) swap(start->data,done->data);
-        return;
-    }
+
+pNode partial_sorted(pList p,int(*comp)(int a, int b) ,pNode start , pNode done){
     
-    
-    if(partial_sorted(comp,start , done)) return ;
 
     pNode pivot = start;
-    start = start->next;
-
-    while(start->prev != done){
-        for(;start !=end(p) ; start = start->next){
-            if(comp(start->data , pivot->data) >= 0 ){
-                break;
-            }
-        }
-        for(;done != begin(p) ; done = done->prev){
-            if(comp(done->data , pivot->data) <= 0 ){
-                break;
-            }
-           
-        }
-        if(start->prev != done){
-            swap(start->data , done->data);
+    pNode j = done;
+    done = done->next;
+    while(1){
+        while(1){
             start = start->next;
-            done = done->prev;
+            if(comp(start->data,pivot->data)>0 || start == j) break;
         }
+        while(1){
+            done = done->prev;
+            if(comp(done->data , pivot->data) < 0 || done == pivot) break;
+        }
+        if(index(p,start) >= index(p,done)) break;
+        swap(start->data, done->data);
+        cout << "to_left : " << start->data << " to_right : " << done->data << endl;
     }
-    swap(done->data , pivot->data);
-    print_all(p);
-    qsort(p,comp,begin(p),done->prev);
-    qsort(p,comp,done->next,last(p));
+    swap(pivot->data , done->data);
+
+    return done;
+}
+
+void qsort(pList p, int(*comp)(int a, int b), pNode start , pNode done){
+    if(sorted(p,comp)) return ;
+    if(start==done || start == done->next){
+        return ;
+    } 
+    cout << start->data << endl;
     
 
+    pNode pivot = partial_sorted(p,comp,start,done);
+    cout << "pivot : "<< pivot->data <<endl;
+    print_all(p);
+    qsort(p,comp,start,pivot->prev);
+    qsort(p,comp,pivot->next,done);
     
 }
 
@@ -393,25 +398,27 @@ void selectionsort(pList p , int (*comp)(int a, int b)){
     }
 }
 
+
 int main(int args, char** argv){
     pList p = new List{};
-    push_back(p,11);
-    push_back(p,21);
-    push_back(p,12);
-    push_back(p,23);
-    push_back(p,9);
-    push_back(p,2);
     push_back(p,1);
+    push_back(p,7);
+    push_back(p,2);
+    push_back(p,3);
+    push_back(p,5);
+    push_back(p,2);
+    push_back(p,3);
     push_back(p,3);
     push_back(p,4);
-    push_back(p,6);
+    push_back(p,9);
+    shuffle(p);
     cout << "before sort----------------------------------------" << endl;
     print_all(p);
     cout << "after sort --------------------------------------------" << endl;
     // insertionsort(p,ascending);
     
-    // bubblesort 랑 qsort 두개가 여러 같은 값이 중복되면 잘 안된다. ㅠ
-    // bubblesort(p,ascending);
+    //  qsort가 여러 같은 값이 중복되면 잘 안된다. ㅠ
+     qsort(p,ascending,begin(p),last(p));
     //  qsort(p,ascending,begin(p) , last(p));
     print_all(p);
     
