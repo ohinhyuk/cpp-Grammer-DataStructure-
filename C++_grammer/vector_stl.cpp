@@ -25,7 +25,6 @@ int main(int args , char ** argv){
 
     v1.clear();
     cout <<v1.size();
-
     vector<int> v4(v3);
     v4.insert(v4.begin()+2,6);
 
