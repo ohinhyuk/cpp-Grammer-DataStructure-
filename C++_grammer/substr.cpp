@@ -18,4 +18,9 @@ int main(void){
         cout << p_str2 << endl;
         p_str2 = strtok(NULL , ",- :");
     }
+
+    string s = "0123456789";
+
+    string subs1 = s.substr(s.find("6"),2); // subs1 = "6789"
+    cout << "sub s1 : " << subs1;
 }
